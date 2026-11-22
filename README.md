@@ -1,6 +1,6 @@
 # LibraryInventorySystem
 
-A web system for a school library, built by PC318 Group 7 (BSIT 3-1, Cebu Technological University).
+A web system for a school library, built by a group of people at Cebu Technological University.
 
 Librarians and admins manage books, students, teachers and staff, approve or reject book requests with a message to the borrower, issue and return books, and collect fines. Students and teachers browse the catalog, request books, read the library's messages and see what they have borrowed and owe. The library rules (limits, reservations, fines, who may do what) live in PostgreSQL routines, so no page can break them, and every change is written to an audit trail.
 
