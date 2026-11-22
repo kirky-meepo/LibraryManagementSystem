@@ -8,3 +8,6 @@ storage/outbox/*
 CLAUDE.md
 PLAYBOOK.md
 docs/PROGRESS.md
+
+# Values to paste into Vercel (contains the database password), never pushed
+.env.vercel
