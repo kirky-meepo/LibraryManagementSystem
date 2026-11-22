@@ -7,7 +7,8 @@
 --   this PC:   & "C:\Program Files\PostgreSQL8\bin\psql.exe" -U postgres -h localhost -d lms -f database\demo_accounts.sql
 --   online:    see docs/DEPLOY.md, "Demo accounts"
 -- Running it again creates whichever account is missing and puts both passwords back to the shared ones.
--- Only bcrypt hashes are here, never the passwords. Give the passwords out privately.
+-- Only bcrypt hashes are here. The passwords are published on purpose in README.md ("Demo accounts"): these are demo
+-- accounts, so use them only to look around.
 \set ON_ERROR_STOP on
 SET client_min_messages = warning;
 SET search_path = lms, public;
@@ -20,7 +21,8 @@ DECLARE
   v_id int;
 BEGIN
   IF v_office IS NULL THEN
-    RAISE EXCEPTION 'No active admin yet: run databaseeset.ps1 (or reset.ps1 -Hosted) first.';
+    RAISE EXCEPTION 'No active admin yet: run database
+eset.ps1 (or reset.ps1 -Hosted) first.';
   END IF;
   FOR r IN SELECT * FROM (VALUES
       ('Demo', 'Admin',     'demo.admin@example.com',     'admin',     'REDACTED'),

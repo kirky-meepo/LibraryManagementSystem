@@ -90,7 +90,7 @@ It ends with "office admin password set" and "Reset finished: postgres". It made
 | Demo Admin | `demo.admin@example.com` | Admin: everything, including staff, Settings, Activity and deleting users |
 | Demo Librarian | `demo.librarian@example.com` | Librarian: books, users, requests, loans, fines, reports, messages |
 
-The file holds only bcrypt hashes of their passwords; give the passwords out privately. Running it again creates a missing account and puts both passwords back, which is handy if someone changed one. A reset never runs it. It needs only the website's own login (`lms_app`), not the database admin. In PowerShell, in the `library` folder:
+The passwords are published on purpose in the README ("Demo accounts"), because these are demo accounts; the file itself holds only their bcrypt hashes. Running it again creates a missing account and puts both passwords back, which is handy if someone changed one. A reset never runs it. It needs only the website's own login (`lms_app`), not the database admin. In PowerShell, in the `library` folder:
 
 ```powershell
 $env:PGPASSWORD = 'the APP_DB_PASS value from your .env'
