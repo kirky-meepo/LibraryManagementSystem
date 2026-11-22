@@ -30,8 +30,8 @@ BEGIN
 eset.ps1 (or reset.ps1 -Hosted) first.';
   END IF;
   FOR r IN SELECT * FROM (VALUES
-      ('Demo', 'Admin',     'demo.admin@example.com',     'admin',     'REDACTED'),
-      ('Demo', 'Librarian', 'demo.librarian@example.com', 'librarian', 'REDACTED')
+      ('Demo', 'Admin',     'demo.admin@example.com',     'admin',     '$2y$12$3VU8E9IyvvlB8KjyyAaOKOBVxr5h3QvGX136RU.z8tSt9xKrbPFFG'),
+      ('Demo', 'Librarian', 'demo.librarian@example.com', 'librarian', '$2y$12$7vooksjXExb4eolinEHOuOdW/NHzkxvrHGN6xAt9nrkc8iIkCh2F2')
     ) AS v (first_name, last_name, email, position, hash)
   LOOP
     PERFORM set_config('app.actor_type', 'staff', true), set_config('app.actor_id', v_office::text, true);

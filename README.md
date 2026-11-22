@@ -41,8 +41,8 @@ Every copy of this project starts with two demo accounts on its own computer: `d
 
 | Role | Email | Password | What it can do |
 | --- | --- | --- | --- |
-| Admin | `demo.admin@example.com` | `REDACTED` | Everything: staff accounts, Settings, Activity, copy limits, deleting users |
-| Librarian | `demo.librarian@example.com` | `REDACTED` | The library desk: books, users, requests, issue and return, fines, reports, messages (no staff accounts, Settings or deleting) |
+| Admin | `demo.admin@example.com` | `5aJNBj3TDCaHRMyU` | Everything: staff accounts, Settings, Activity, copy limits, deleting users |
+| Librarian | `demo.librarian@example.com` | `MJsSPhD7fxzzAaJA` | The library desk: books, users, requests, issue and return, fines, reports, messages (no staff accounts, Settings or deleting) |
 
 These passwords are public on purpose, so they only belong on your own computer. A hosted site (Vercel, Supabase) never gets them: `reset.ps1 -Hosted` skips them, and the author's online copy has its own private logins. Do not run `demo_accounts.sql` on a public site. Use them only to look around. Do not enter real personal data while signed in with them. There are no sample students or teachers: make your own with **Create an account** (Member side) or in Manage Users. The library starts with 229 titles in 22 categories (606 copies, all on the shelf): 12 books from `06_seed.sql` and 217 real college textbooks and references from `07_seed_catalog.sql`. `reset.ps1 -NoSeed` (or `NO_SEED=1 bash database/reset.sh`) builds an empty database without books or the office admin.
 
