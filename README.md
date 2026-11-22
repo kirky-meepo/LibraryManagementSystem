@@ -35,7 +35,7 @@ A reset makes one account, the office admin:
 | --- | --- | --- |
 | `OFFICE_ADMIN_EMAIL` in `.env` | Admin, named Library Management Office: everything, including staff accounts, Settings, Activity, copy limits and deleting users | `OFFICE_ADMIN_PASSWORD` in `.env` |
 
-There are no sample students, teachers or librarians. The library starts with 229 titles in 22 categories (606 copies, all on the shelf): 12 books from `06_seed.sql` and 217 real college textbooks and references from `07_seed_catalog.sql`. `reset.ps1 -NoSeed` (or `NO_SEED=1 bash database/reset.sh`) builds an empty database without books or the office admin.
+Two shared demo accounts, Demo Admin (`demo.admin@example.com`) and Demo Librarian (`demo.librarian@example.com`), come from `database/demo_accounts.sql`. A reset never runs that file; run it when you want them (docs/DEPLOY.md, "Demo accounts"). Their passwords are not in the project: give them out privately. There are no sample students or teachers. The library starts with 229 titles in 22 categories (606 copies, all on the shelf): 12 books from `06_seed.sql` and 217 real college textbooks and references from `07_seed_catalog.sql`. `reset.ps1 -NoSeed` (or `NO_SEED=1 bash database/reset.sh`) builds an empty database without books or the office admin.
 
 Anyone can make a student or teacher account with **Create an account** on the sign-in page (Member side). Staff accounts are only made by an admin in Manage Users.
 
@@ -59,6 +59,7 @@ library/
     reset.ps1 / reset.sh          rebuild the database
     run_tests.ps1 / run_tests.sh  rebuild a scratch copy (lms_test) and run tests.sql
     seed_passwords.php            gives the office admin OFFICE_ADMIN_PASSWORD
+    demo_accounts.sql             the two shared demo accounts (Demo Admin, Demo Librarian), run by hand
     tools/test_mail.php           send one test email through Brevo
     tools/mail_status.php         what Brevo did with a message (delivered, bounced, ...)
     tools/verify_isbns.php        check every ISBN's check digit and title with Open Library

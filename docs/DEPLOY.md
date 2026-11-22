@@ -81,6 +81,27 @@ It ends with "office admin password set" and "Reset finished: postgres". It made
 - **Forgot your password?** with an address you can open: the email arrives (check Junk too).
 - **Sign out.**
 
+## Demo accounts
+
+`database/demo_accounts.sql` adds two shared accounts, and nothing else:
+
+| Account | Email | Role |
+| --- | --- | --- |
+| Demo Admin | `demo.admin@example.com` | Admin: everything, including staff, Settings, Activity and deleting users |
+| Demo Librarian | `demo.librarian@example.com` | Librarian: books, users, requests, loans, fines, reports, messages |
+
+The file holds only bcrypt hashes of their passwords; give the passwords out privately. Running it again creates a missing account and puts both passwords back, which is handy if someone changed one. A reset never runs it. It needs only the website's own login (`lms_app`), not the database admin. In PowerShell, in the `library` folder:
+
+```powershell
+$env:PGPASSWORD = 'the APP_DB_PASS value from your .env'
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" "host=<session pooler host> port=5432 dbname=postgres user=lms_app.<project-ref> sslmode=require" -f database\demo_accounts.sql
+Remove-Item Env:PGPASSWORD
+```
+
+It ends with a small table listing both accounts as active. On this PC: `& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -h localhost -d lms -f database\demo_accounts.sql`.
+
+Anyone with the Demo Admin password can add or delete users and change settings. To take access away, sign in as the office admin and use **Manage Users → Staff → Deactivate** (or **Reset password**).
+
 ## Brevo on Vercel
 
 - Make a **new** key for the deployment instead of reusing the local one: Brevo → **SMTP & API** → **API keys** → **Generate a new API key**, Access **Restricted**, **Transactional email: All**, nothing else. Put it only in Vercel's `BREVO_API_KEY`.
