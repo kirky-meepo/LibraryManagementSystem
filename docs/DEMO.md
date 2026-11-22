@@ -38,8 +38,9 @@ Choose **Librarian/Admin**, type the office admin email and password, **Sign in*
 
 ## 5. Behind the scenes
 
+- **Manage Users → Show → Staff** has an **Activity** column: Active while someone is signed in, Inactive after they sign out or sit idle (and for an account that never signed in).
 - **Status and Reports** and its CSV downloads; **Activity** (admin) lists who did what, in plain words.
 - In pgAdmin: `SELECT * FROM lms.audit_log ORDER BY audit_id DESC LIMIT 10;` and `SELECT * FROM lms.v_dashboard_stats;`.
-- `powershell -ExecutionPolicy Bypass -File database\run_tests.ps1`: 26 PASS lines. `php database\tools\smoke.php` right after a reset runs the whole flow above through the real pages (27 checks).
+- `powershell -ExecutionPolicy Bypass -File database\run_tests.ps1`: 27 PASS lines. `php database\tools\smoke.php` right after a reset runs the whole flow above through the real pages (27 checks).
 
 Run `database\reset.ps1` again to start over.

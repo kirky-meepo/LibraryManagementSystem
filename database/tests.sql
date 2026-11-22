@@ -996,6 +996,49 @@ EXCEPTION WHEN others THEN
 END $$;
 
 -- ---------------------------------------------------------------------------
+-- 27. Active / Inactive in Manage Users follows signing in and out (and goes inactive when idle)
+-- ---------------------------------------------------------------------------
+DO $$
+DECLARE
+  v_s int := pg_temp.new_student('t27');
+  v_email text := (SELECT email FROM student WHERE student_id = v_s);
+  v_lib int := pg_temp.id('librarian');
+  v_never boolean; v_in boolean; v_out boolean; v_back boolean; v_idle boolean; v_touch_idle boolean; v_lib_in boolean;
+  v_listed boolean; v_app text := 'allowed'; v_seen timestamptz;
+BEGIN
+  SELECT is_signed_in INTO v_never FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;   -- never used
+  PERFORM fn_record_login(v_email, '10.27.0.1', 'member', true, 'student', v_s);
+  SELECT is_signed_in INTO v_in FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;
+  PERFORM fn_logout('student', v_s);
+  SELECT is_signed_in INTO v_out FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;
+  -- The heartbeat refreshes a signed-in person only; it never signs anyone in.
+  PERFORM fn_presence_touch('student', v_s);
+  SELECT is_signed_in INTO v_touch_idle FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;
+  PERFORM fn_record_login(v_email, '10.27.0.1', 'member', true, 'student', v_s);
+  SELECT is_signed_in INTO v_back FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;
+  -- Closing the browser without signing out: after the idle time the person counts as signed out.
+  UPDATE account_presence SET last_seen = now() - make_interval(mins => fn_setting_int('session_idle_minutes', 30) + 1)
+   WHERE user_type = 'student' AND user_id = v_s;
+  SELECT is_signed_in INTO v_idle FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;
+  PERFORM fn_presence_touch('student', v_s);                                -- still signed in in the table, so it refreshes
+  SELECT is_signed_in, last_seen INTO v_lib_in, v_seen FROM v_user_directory WHERE user_type = 'student' AND user_id = v_s;
+  -- The list the page reads carries the column, and staff are tracked the same way.
+  PERFORM fn_record_login((SELECT email FROM staff WHERE staff_id = v_lib), '10.27.0.2', 'staff', true, 'staff', v_lib);
+  v_listed := (SELECT bool_or(l.is_signed_in) FROM fn_list_staff(NULL, NULL, 50, 0) l WHERE l.user_id = v_lib);
+  SET LOCAL ROLE lms_app;
+  BEGIN INSERT INTO account_presence VALUES ('student', v_s + 1000, true, now());
+  EXCEPTION WHEN insufficient_privilege THEN v_app := 'blocked'; END;
+  RESET ROLE;
+  PERFORM pg_temp.record(27, 'Active / Inactive follows signing in and out, and goes inactive when idle',
+    v_never = false AND v_in AND NOT v_out AND NOT v_touch_idle AND v_back AND NOT v_idle AND v_lib_in AND v_seen > now() - interval '1 minute'
+      AND v_listed AND v_app = 'blocked',
+    format('never signed in %s | after sign-in %s | after sign-out %s | heartbeat while signed out %s | signed in again %s | idle past the limit %s | heartbeat refreshes %s | staff list shows it %s | app writes the table: %s',
+           v_never, v_in, v_out, v_touch_idle, v_back, v_idle, v_lib_in, v_listed, v_app));
+EXCEPTION WHEN others THEN
+  PERFORM pg_temp.record(27, 'Active / Inactive follows signing in and out, and goes inactive when idle', false, SQLERRM);
+END $$;
+
+-- ---------------------------------------------------------------------------
 -- Results
 -- ---------------------------------------------------------------------------
 \pset tuples_only on

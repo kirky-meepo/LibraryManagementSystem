@@ -150,6 +150,8 @@ BEGIN
   IF coalesce(p_success, false) THEN
     INSERT INTO audit_log (actor_type, actor_id, action, table_name, record_id, detail)
     VALUES (p_user_type, p_user_id, 'login', p_user_type, p_user_id::text, jsonb_build_object('ip', host(p_ip)));
+    INSERT INTO account_presence AS ap (user_type, user_id, signed_in, last_seen) VALUES (p_user_type, p_user_id, true, now())
+    ON CONFLICT (user_type, user_id) DO UPDATE SET signed_in = true, last_seen = excluded.last_seen;
   END IF;
 END $$;
 
@@ -162,7 +164,17 @@ BEGIN
   END IF;
   INSERT INTO audit_log (actor_type, actor_id, action, table_name, record_id, detail)
   VALUES (p_user_type, p_user_id, 'logout', p_user_type, p_user_id::text, '{}'::jsonb);
+  INSERT INTO account_presence AS ap (user_type, user_id, signed_in, last_seen) VALUES (p_user_type, p_user_id, false, now())
+  ON CONFLICT (user_type, user_id) DO UPDATE SET signed_in = false, last_seen = excluded.last_seen;
 END $$;
+
+-- The site calls this every couple of minutes while someone browses. It can only refresh a person who is already
+-- signed in (a sign-in is recorded by fn_record_login); it never signs anyone in.
+CREATE OR REPLACE FUNCTION fn_presence_touch(p_user_type text, p_user_id int)
+RETURNS void LANGUAGE sql SECURITY DEFINER SET search_path = lms, pg_temp AS $$
+  UPDATE account_presence p SET last_seen = now()
+   WHERE p.user_type = p_user_type AND p.user_id = p_user_id AND p.signed_in
+$$;
 
 -- ---------------------------------------------------------------------------
 -- Passwords
@@ -437,5 +449,6 @@ REVOKE ALL ON FUNCTION fn_auth_hash_ok(text), fn_auth_check_hash(text), fn_auth_
                        fn_register_member(text, text, text, text, text, text, text, int, text, text, inet),
                        fn_request_password_reset(text, inet, text), fn_check_reset_token(text),
                        fn_reset_password(text, text),
-                       fn_session_read(text), fn_session_write(text, text), fn_session_destroy(text), fn_session_gc(int)
+                       fn_session_read(text), fn_session_write(text, text), fn_session_destroy(text), fn_session_gc(int),
+                       fn_presence_touch(text, int)
   FROM PUBLIC;

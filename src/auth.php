@@ -77,6 +77,22 @@ function session_boot(): void
         }
     }
     $_SESSION['last_seen'] = time();
+    presence_touch();
+}
+
+/** Tell the database the signed-in person is still here, at most every 2 minutes (Activity column, Manage Users). */
+function presence_touch(): void
+{
+    $auth = $_SESSION['auth'] ?? null;
+    if (!is_array($auth) || time() - (int) ($_SESSION['presence_at'] ?? 0) < 120) {
+        return;
+    }
+    $_SESSION['presence_at'] = time();
+    try {
+        q('SELECT fn_presence_touch(:t, :id)', [':t' => (string) $auth['type'], ':id' => (int) $auth['id']]);
+    } catch (Throwable) {
+        // The label is a convenience; a page must never fail because of it.
+    }
 }
 
 /** Destroy the session completely, then start a fresh empty one (so a flash message can still be shown). */
@@ -290,6 +306,7 @@ function login(string $kind, string $email, string $password): array
     csrf_rotate();
     $_SESSION['auth'] = ['type' => $type, 'id' => $id];
     $_SESSION['last_seen'] = time();
+    $_SESSION['presence_at'] = time();
 
     if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
         set_password($type, $id, $password, (bool) $found['must_change_password']);

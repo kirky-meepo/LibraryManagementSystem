@@ -206,6 +206,7 @@ require APP_SRC . '/partials/header.php';
           <?php else: ?><th scope="col">Position</th><?php endif; ?>
           <th scope="col">Contact number</th>
           <th scope="col">Status</th>
+          <th scope="col">Activity</th>
           <th scope="col"><?= $type === 'staff' ? 'Hired' : 'Joined' ?></th>
           <th scope="col"><span class="sr-only">Actions</span></th>
         </tr>
@@ -230,6 +231,8 @@ require APP_SRC . '/partials/header.php';
             <td class="nowrap"><?= $p['contact_number'] ? h($p['contact_number']) : '<span class="muted">None</span>' ?></td>
             <td><?= $p['is_active'] ? '<span class="chip chip-ok">Active</span>' : '<span class="chip">Inactive</span>' ?>
               <?= $p['must_change_password'] ? '<span class="sub">Must change password</span>' : '' ?></td>
+            <td><?php if ($p['is_signed_in']): ?><span class="chip chip-ok">Active</span><span class="sub">Signed in now</span>
+              <?php else: ?><span class="chip">Inactive</span><span class="sub"><?= $p['last_seen'] ? 'Last seen ' . h(fmt_datetime($p['last_seen'])) : 'Never signed in' ?></span><?php endif; ?></td>
             <td class="nowrap"><?= $p['joined_on'] ? h(fmt_date($p['joined_on'])) : '<span class="muted">Not set</span>' ?></td>
             <td class="actions">
               <?php if (!$canManage): ?>

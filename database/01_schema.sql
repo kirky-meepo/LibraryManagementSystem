@@ -1,4 +1,4 @@
--- 01_schema.sql: the 14 tables of docs/SPEC.md part 1, with every rule the database can enforce on its own.
+-- 01_schema.sql: the 15 tables of docs/SPEC.md part 1, with every rule the database can enforce on its own.
 -- Safe to re-run: it drops and recreates the lms schema.
 \set ON_ERROR_STOP on
 SET client_min_messages = warning;
@@ -290,6 +290,19 @@ CREATE TABLE app_session (
   CONSTRAINT ck_app_session_id CHECK (id ~ '^[A-Za-z0-9,-]+$' AND length(id) >= 16)
 );
 CREATE INDEX ix_app_session_updated ON app_session (updated_at);
+
+-- Who is signed in right now (the Activity column in Manage Users). A sign-in sets signed_in, a sign-out clears it,
+-- and the site refreshes last_seen while the person browses; without a refresh for the idle time (the
+-- session_idle_minutes setting) the person counts as signed out. Only the routines in 04b_auth.sql write here, and
+-- there is no audit trigger because it changes all day. A person who never signed in has no row.
+CREATE TABLE account_presence (
+  user_type varchar(10) NOT NULL,
+  user_id   int         NOT NULL,
+  signed_in boolean     NOT NULL,
+  last_seen timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT pk_account_presence PRIMARY KEY (user_type, user_id),
+  CONSTRAINT ck_presence_user_type CHECK (user_type IN ('staff', 'student', 'teacher'))
+);
 
 -- ---------------------------------------------------------------------------
 -- Triggers that keep data clean

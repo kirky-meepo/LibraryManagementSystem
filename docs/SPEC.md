@@ -5,7 +5,7 @@ transaction is allowed as a table name in PostgreSQL (it is not a reserved word)
 Pattern 'one borrower': a row points to EXACTLY ONE of student_id / teacher_id, enforced with
 CHECK ((student_id IS NOT NULL)::int + (teacher_id IS NOT NULL)::int = 1).
 
-TABLES (14)
+TABLES (15)
 staff           staff_id PK; first_name; middle_name null; last_name; email unique; password_hash;
                 position CHECK in (librarian, admin); contact_number varchar(20); date_hired date;
                 is_active bool default true; must_change_password bool default false
@@ -58,6 +58,10 @@ password_reset  reset_id bigint PK; student_id FK null; teacher_id FK null; staf
                 No audit trigger (it would copy token_hash); the routines write their own audit rows.
 app_session     id varchar(256) PK (letters, digits, comma, hyphen; 16 or more); data text; updated_at timestamptz
                 PHP sessions when SESSION_DRIVER=db. Only fn_session_* touch it; no audit trigger.
+account_presence user_type + user_id PK (staff, student or teacher; no foreign key); signed_in bool; last_seen timestamptz
+                Who is signed in now: fn_record_login sets it, fn_logout clears it, fn_presence_touch refreshes last_seen.
+                Counts as Active only while signed_in and last_seen is within session_idle_minutes. No row = never signed in.
+                No audit trigger; the app role cannot write it directly.
 
 DELETE RULES
 History tables (transaction, fine, book_request, message) reference people and books with ON DELETE RESTRICT.
@@ -139,6 +143,9 @@ fn_reset_password(token_hash, new_hash) -> user_type, user_id, first_name, email
    Otherwise LM001 "This reset link has expired or was already used. Ask for a new one." Audit 'password_reset'.
 Audit detail never holds a password, a hash or a token. The password routines set lms.audit_quiet so the
 trigger does not add a second, password-only "update" row.
+fn_presence_touch(user_type, user_id)
+   Refreshes last_seen of a person who is already signed in; never signs anyone in. The site calls it at most every
+   2 minutes. fn_record_login (a success) and fn_logout also write account_presence.
 fn_session_read(id) -> data or NULL; fn_session_write(id, data) (insert or replace); fn_session_destroy(id);
 fn_session_gc(max_seconds) -> rows removed. Used by src/session.php when SESSION_DRIVER=db.
 
@@ -173,7 +180,8 @@ database transaction. It never stores password_hash values.
 
 VIEWS
 v_user_directory   staff, students and teachers as one list: user_type, user_id, full_name, email, contact_number,
-                   detail (course and year / department / position), is_active, joined_on
+                   detail (course and year / department / position), is_active, joined_on, and at the end is_signed_in
+                   and last_seen (from account_presence; the Activity column in Manage Users)
 v_book_detail      book + availability word; copy_limit is the last column
 v_request_detail   request + borrower name, type and email + book title, author and copies_available + the borrower's
                    active loan count and unpaid fine total + the deciding staff name

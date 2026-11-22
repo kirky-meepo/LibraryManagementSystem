@@ -1,6 +1,6 @@
 # Entity relationship diagram
 
-The 14 tables of the LibraryInventorySystem (schema `lms`). docs/SPEC.md is the source of truth; this diagram follows it.
+The 15 tables of the LibraryInventorySystem (schema `lms`). docs/SPEC.md is the source of truth; this diagram follows it.
 
 ```mermaid
 erDiagram
@@ -154,6 +154,12 @@ erDiagram
         text data
         timestamptz updated_at
     }
+    account_presence {
+        varchar user_type PK "staff | student | teacher"
+        int user_id PK
+        boolean signed_in
+        timestamptz last_seen
+    }
 
     staff        ||--o{ book         : "adds"
     staff        ||--o{ book_request : "decides"
@@ -175,7 +181,7 @@ erDiagram
     staff        |o--o{ password_reset : "asks to reset"
 ```
 
-`message_template`, `library_setting`, `audit_log`, `login_attempt` and `app_session` (sessions when SESSION_DRIVER=db) stand alone. Routines read the templates and settings by key, the audit trigger writes `audit_log`, and the sign-in routines in `04b_auth.sql` write `login_attempt`. `password_reset` belongs to exactly one student, teacher or staff member and is deleted with them; it has no audit trigger, because the trigger would copy the token hash.
+`message_template`, `library_setting`, `audit_log`, `login_attempt` and `app_session` (sessions when SESSION_DRIVER=db) and `account_presence` (who is signed in now) stand alone. Routines read the templates and settings by key, the audit trigger writes `audit_log`, and the sign-in routines in `04b_auth.sql` write `login_attempt`. `password_reset` belongs to exactly one student, teacher or staff member and is deleted with them; it has no audit trigger, because the trigger would copy the token hash.
 
 ## How the request, loan and fine flow connects the tables
 

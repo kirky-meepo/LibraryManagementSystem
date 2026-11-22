@@ -257,11 +257,11 @@ CREATE OR REPLACE FUNCTION fn_list_students(p_search text DEFAULT NULL, p_active
                                             p_limit int DEFAULT 25, p_offset int DEFAULT 0)
 RETURNS TABLE (user_type text, user_id int, full_name text, email text, contact_number text, detail text, is_active boolean,
                joined_on date, first_name text, middle_name text, last_name text, course text, year_level smallint,
-               department text, "position" text, must_change_password boolean, has_history boolean, total_count bigint)
+               department text, "position" text, must_change_password boolean, has_history boolean, is_signed_in boolean, last_seen timestamptz, total_count bigint)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = lms, pg_temp AS $$
   SELECT u.user_type, u.user_id, u.full_name::text, u.email::text, u.contact_number::text, u.detail::text, u.is_active,
          u.joined_on, u.first_name::text, u.middle_name::text, u.last_name::text, u.course::text, u.year_level,
-         u.department::text, u.position::text, u.must_change_password, u.has_history, count(*) OVER ()
+         u.department::text, u.position::text, u.must_change_password, u.has_history, u.is_signed_in, u.last_seen, count(*) OVER ()
     FROM v_user_directory u
    WHERE u.user_type = 'student'
      AND (p_active IS NULL OR u.is_active = p_active)
@@ -331,11 +331,11 @@ CREATE OR REPLACE FUNCTION fn_list_teachers(p_search text DEFAULT NULL, p_active
                                             p_limit int DEFAULT 25, p_offset int DEFAULT 0)
 RETURNS TABLE (user_type text, user_id int, full_name text, email text, contact_number text, detail text, is_active boolean,
                joined_on date, first_name text, middle_name text, last_name text, course text, year_level smallint,
-               department text, "position" text, must_change_password boolean, has_history boolean, total_count bigint)
+               department text, "position" text, must_change_password boolean, has_history boolean, is_signed_in boolean, last_seen timestamptz, total_count bigint)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = lms, pg_temp AS $$
   SELECT u.user_type, u.user_id, u.full_name::text, u.email::text, u.contact_number::text, u.detail::text, u.is_active,
          u.joined_on, u.first_name::text, u.middle_name::text, u.last_name::text, u.course::text, u.year_level,
-         u.department::text, u.position::text, u.must_change_password, u.has_history, count(*) OVER ()
+         u.department::text, u.position::text, u.must_change_password, u.has_history, u.is_signed_in, u.last_seen, count(*) OVER ()
     FROM v_user_directory u
    WHERE u.user_type = 'teacher'
      AND (p_active IS NULL OR u.is_active = p_active)
@@ -460,11 +460,11 @@ CREATE OR REPLACE FUNCTION fn_list_staff(p_search text DEFAULT NULL, p_active bo
                                          p_limit int DEFAULT 25, p_offset int DEFAULT 0)
 RETURNS TABLE (user_type text, user_id int, full_name text, email text, contact_number text, detail text, is_active boolean,
                joined_on date, first_name text, middle_name text, last_name text, course text, year_level smallint,
-               department text, "position" text, must_change_password boolean, has_history boolean, total_count bigint)
+               department text, "position" text, must_change_password boolean, has_history boolean, is_signed_in boolean, last_seen timestamptz, total_count bigint)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = lms, pg_temp AS $$
   SELECT u.user_type, u.user_id, u.full_name::text, u.email::text, u.contact_number::text, u.detail::text, u.is_active,
          u.joined_on, u.first_name::text, u.middle_name::text, u.last_name::text, u.course::text, u.year_level,
-         u.department::text, u.position::text, u.must_change_password, u.has_history, count(*) OVER ()
+         u.department::text, u.position::text, u.must_change_password, u.has_history, u.is_signed_in, u.last_seen, count(*) OVER ()
     FROM v_user_directory u
    WHERE u.user_type = 'staff'
      AND (p_active IS NULL OR u.is_active = p_active)

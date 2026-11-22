@@ -98,24 +98,31 @@ SELECT 'staff'::text            AS user_type,
        (EXISTS (SELECT 1 FROM transaction x WHERE x.staff_id = s.staff_id)
         OR EXISTS (SELECT 1 FROM book_request r WHERE r.decided_by_id = s.staff_id)
         OR EXISTS (SELECT 1 FROM message m WHERE m.sender_staff_id = s.staff_id)
-        OR EXISTS (SELECT 1 FROM book b WHERE b.added_by_id = s.staff_id)) AS has_history
+        OR EXISTS (SELECT 1 FROM book b WHERE b.added_by_id = s.staff_id)) AS has_history,
+       coalesce(ap.signed_in AND ap.last_seen > now() - make_interval(mins => fn_setting_int('session_idle_minutes', 30)), false) AS is_signed_in,
+       ap.last_seen
   FROM staff s
+  LEFT JOIN account_presence ap ON ap.user_type = 'staff' AND ap.user_id = s.staff_id
 UNION ALL
 SELECT 'student', st.student_id, st.first_name || ' ' || st.last_name, st.email, st.contact_number,
        st.course || ', year ' || st.year_level, st.is_active, st.date_registered,
        st.first_name, st.middle_name, st.last_name, st.course, st.year_level, NULL, NULL, st.must_change_password,
        (EXISTS (SELECT 1 FROM transaction x WHERE x.student_id = st.student_id)
         OR EXISTS (SELECT 1 FROM book_request r WHERE r.student_id = st.student_id)
-        OR EXISTS (SELECT 1 FROM message m WHERE m.recipient_student_id = st.student_id))
+        OR EXISTS (SELECT 1 FROM message m WHERE m.recipient_student_id = st.student_id)),
+       coalesce(ap.signed_in AND ap.last_seen > now() - make_interval(mins => fn_setting_int('session_idle_minutes', 30)), false), ap.last_seen
   FROM student st
+  LEFT JOIN account_presence ap ON ap.user_type = 'student' AND ap.user_id = st.student_id
 UNION ALL
 SELECT 'teacher', te.teacher_id, te.first_name || ' ' || te.last_name, te.email, te.contact_number,
        te.department, te.is_active, te.date_registered,
        te.first_name, te.middle_name, te.last_name, NULL, NULL, te.department, NULL, te.must_change_password,
        (EXISTS (SELECT 1 FROM transaction x WHERE x.teacher_id = te.teacher_id)
         OR EXISTS (SELECT 1 FROM book_request r WHERE r.teacher_id = te.teacher_id)
-        OR EXISTS (SELECT 1 FROM message m WHERE m.recipient_teacher_id = te.teacher_id))
-  FROM teacher te;
+        OR EXISTS (SELECT 1 FROM message m WHERE m.recipient_teacher_id = te.teacher_id)),
+       coalesce(ap.signed_in AND ap.last_seen > now() - make_interval(mins => fn_setting_int('session_idle_minutes', 30)), false), ap.last_seen
+  FROM teacher te
+  LEFT JOIN account_presence ap ON ap.user_type = 'teacher' AND ap.user_id = te.teacher_id;
 
 -- A request with everything the librarian needs to decide without opening another page.
 CREATE OR REPLACE VIEW v_request_detail AS

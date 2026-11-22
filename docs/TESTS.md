@@ -25,7 +25,7 @@ DELETE FROM lms.login_attempt WHERE NOT success;
 
 ## Database rules (Steps 2 to 4)
 
-Run `powershell -ExecutionPolicy Bypass -File database\run_tests.ps1`. It rebuilds a scratch copy called lms_test and prints one PASS or FAIL line per rule (26 checks: requests, approvals, loans, fines, expiry, delete and deactivate rules, the audit trail, the database roles, the per-title copy limit, sign-up, sign-in lock-out, reset links, password changes and their audit rows, the Create and Read functions with the app-role lock-down, requests for titles with no copies, and sessions stored in the database).
+Run `powershell -ExecutionPolicy Bypass -File database\run_tests.ps1`. It rebuilds a scratch copy called lms_test and prints one PASS or FAIL line per rule (27 checks: requests, approvals, loans, fines, expiry, delete and deactivate rules, the audit trail, the database roles, the per-title copy limit, sign-up, sign-in lock-out, reset links, password changes and their audit rows, the Create and Read functions with the app-role lock-down, requests for titles with no copies, sessions stored in the database, and the Active / Inactive label).
 
 - [x] All 13 checks print PASS (Nov 20, 2026).
 - [x] Inserting a book with copies_available bigger than copies_total is refused by ck_book_copies.
@@ -250,3 +250,9 @@ The hosted path was tested against a local stand-in for Supabase: a separate dat
 - [x] `smoke.php --session=db` against it with `APP_ENV=prod`, `DB_EMULATE_PREPARES=1` and `LOG_TO_STDERR=1`: 27 of 27 PASS.
 - [x] Locally, unchanged: 26 of 26 database checks and a normal reset.
 - [ ] The container (`Dockerfile.vercel`) was not built here: Docker is not installed. Vercel's first deploy is its first build.
+
+## Active / Inactive in Manage Users (Nov 22, 2026)
+
+- [x] Database check 27: a person who never signed in is Inactive; a sign-in makes them Active; a sign-out makes them Inactive; the heartbeat (fn_presence_touch) refreshes only someone who is signed in and never signs anyone in; after session_idle_minutes without a refresh they count as Inactive; the staff list carries the column; the app role cannot write account_presence.
+- [x] By hand through the real pages (local): Manage Users, Show: Staff, has an **Activity** column next to Status. With Demo Admin signed in: Demo Admin Active ("Signed in now"), the other two Inactive ("Never signed in"). After Demo Librarian signs in: Active; after it signs out: Inactive ("Last seen Nov 22, 2026, 4:05 PM"). A signed-out session is redirected to the sign-in page.
+- The **Status** column (Active / Inactive) is unchanged: it still means the account is enabled or deactivated by an admin. **Activity** only shows whether the person is signed in.

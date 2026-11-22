@@ -25,7 +25,7 @@ Built with PHP 8.2+ (no framework), PostgreSQL 15+, HTML, CSS and a little plain
 5. **Build the database:** `powershell -ExecutionPolicy Bypass -File database\reset.ps1` (Git Bash: `bash database/reset.sh`). It creates the `lms` database, the tables, routines, views, audit triggers and the three roles, the 229-title catalog and the office admin, the only account. Run it again any time to start fresh (it deletes all data).
 6. **Start the site:** `php -S localhost:8000 -t public`, then open http://localhost:8000. (With XAMPP or Laragon, point the site at the `public` folder.)
 
-Check it: `php database\tools\smoke.php` right after `database\reset.ps1` signs in as the office admin, signs up, signs in, requests, approves, issues, returns, resets a password and locks sign-in through the real pages, and prints PASS or FAIL for each (run `database\reset.ps1` again afterwards). http://localhost:8000/health.php says OK, and `powershell -ExecutionPolicy Bypass -File database\run_tests.ps1` prints 26 PASS lines.
+Check it: `php database\tools\smoke.php` right after `database\reset.ps1` signs in as the office admin, signs up, signs in, requests, approves, issues, returns, resets a password and locks sign-in through the real pages, and prints PASS or FAIL for each (run `database\reset.ps1` again afterwards). http://localhost:8000/health.php says OK, and `powershell -ExecutionPolicy Bypass -File database\run_tests.ps1` prints 27 PASS lines.
 
 ## The account
 
@@ -55,7 +55,7 @@ library/
   README.md          this file
   .env.example       settings to copy into .env (never commit .env)
   docs/
-    SPEC.md          the database: 14 tables, routines, views, roles, message presets
+    SPEC.md          the database: 15 tables, routines, views, roles, message presets
     ERD.md           entity relationship diagram (Mermaid)
     HARDENING.md     database hardening: five layers, before and after
     TESTS.md         tests to run by hand, all ticked
