@@ -1,0 +1,86 @@
+/*
+ * Design tokens: the one place colours, type, spacing, radii, shadows and motion are defined.
+ * Palette: #011f4b #03396c #005b96 #6497b1 #b3cde0 on a white page.
+ */
+:root {
+  /* Palette */
+  --navy-900: #011f4b;
+  --navy-700: #03396c;
+  --blue-600: #005b96;
+  --blue-400: #6497b1;
+  --blue-200: #b3cde0;
+  --white: #ffffff;
+
+  /* Text and surfaces (all text colours reach at least 4.5:1 on white) */
+  --page: #ffffff;
+  --surface: #ffffff;
+  --surface-tint: #f3f7fb;      /* table heads, hover rows, subtle panels */
+  --ink: #12233d;               /* body text, 15.75:1 */
+  --ink-strong: #011f4b;        /* headings, 16.2:1 */
+  --ink-muted: #4b5a6e;         /* secondary text, 7.0:1 */
+  --line: #d9e2ec;              /* dividers (decorative) */
+  --line-strong: #7d8ea3;       /* form field borders, 3.3:1 against white */
+  --on-dark: #ffffff;
+  --on-dark-muted: #c9d9e8;     /* sidebar text on navy, 11.2:1 */
+
+  /* Status (always paired with a word) */
+  --ok-bg: #e5f3e8;     --ok-ink: #1d6331;     --ok-dot: #2e8540;
+  --warn-bg: #fff3d1;   --warn-ink: #6d4400;   --warn-dot: #c78a00;
+  --bad-bg: #fde7e7;    --bad-ink: #9d1c1c;    --bad-dot: #d03333;
+  --info-bg: #e3eef7;   --info-ink: #03396c;   --info-dot: #005b96;
+  --muted-bg: #edf1f5;  --muted-ink: #3f4c5d;  --muted-dot: #7d8ea3;
+
+  /* Actions: one primary colour, grey secondary, red only for delete */
+  --primary: #005b96;
+  --primary-hover: #03396c;
+  --secondary-border: #8593a5;
+  --secondary-hover: #eef2f6;
+  --danger: #b42318;
+  --danger-hover: #8f1c13;
+  --focus: #005b96;
+  --focus-on-dark: #b3cde0;
+
+  /* Type */
+  --font-heading: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.25rem;
+  --leading: 1.55;
+
+  /* Spacing (4px grid) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  /* Shape and depth */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(1 31 75 / 0.08);
+  --shadow: 0 4px 14px rgb(1 31 75 / 0.10);
+  --shadow-lg: 0 16px 36px rgb(1 31 75 / 0.20);
+
+  /* Motion */
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 320ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --float-duration: 7s;
+  --stagger: 70ms;
+
+  /* Layout */
+  --topbar-h: 60px;
+  --sidebar-w: 248px;
+  --content-max: 1240px;
+}

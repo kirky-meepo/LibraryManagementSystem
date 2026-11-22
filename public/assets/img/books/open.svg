@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="currentColor" aria-hidden="true" focusable="false">
+  <!-- A single open book. Original drawing for this project. -->
+  <path d="M64 36C48 24 27 21 8 27v72c19-6 40-3 56 9z" opacity=".7"/>
+  <path d="M64 36c16-12 37-15 56-9v72c-19-6-40-3-56 9z" opacity=".55"/>
+  <path d="M64 36v72" stroke="currentColor" stroke-width="3" fill="none"/>
+  <g stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M20 44c10-3 22-2 34 4M20 56c10-3 22-2 34 4M20 68c10-3 22-2 34 4M20 80c10-3 22-2 30 3"/>
+    <path d="M108 44c-10-3-22-2-34 4M108 56c-10-3-22-2-34 4M108 68c-10-3-22-2-34 4"/>
+  </g>
+</svg>

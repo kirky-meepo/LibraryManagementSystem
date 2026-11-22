@@ -1,0 +1,28 @@
+/* Print: only the page content, in black on white. Status and Reports fits on one page (see status.php). */
+@page { size: A4 portrait; margin: 12mm; }
+.topbar, .sidebar, .site-footer, .skip-link, .toast-region, .page-actions, .toolbar, .tabs, .pager, .btn, .no-print, dialog { display: none !important; }
+body { background: #fff; color: #000; font-size: 10.5pt; display: block; }
+.shell, .main { display: block; padding: 0; margin: 0; }
+.main > * { max-width: none; }
+a { color: #000; text-decoration: none; }
+.card, .table-wrap { box-shadow: none; border-color: #999; break-inside: avoid; }
+.stat-card { box-shadow: none; transform: none !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+.stat-art { display: none; }
+h1 { font-size: 16pt; }
+h2 { font-size: 13pt; }
+
+/* Status and Reports on one A4 page */
+.report-page .page-head { margin-bottom: 4mm; }
+.report-page .lead { font-size: 9.5pt; }
+.report-page .stat-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 3mm; margin-bottom: 4mm; }
+.report-page .stat-card { min-height: 0; padding: 3mm; }
+.report-page .stat-value { font-size: 15pt; }
+.report-page .stat-icon, .report-page .stat-note { display: none; }
+.report-page .report-grid { grid-template-columns: 1fr 1fr; gap: 4mm; }
+.report-page .chart-card { padding: 3mm; break-inside: avoid; }
+.report-page .chart-table, .report-page .export-links { display: none !important; }
+.report-page .card-title { font-size: 11pt; }
+.report-page table { font-size: 8.5pt; }
+.report-page th, .report-page td { padding: 1.5mm 2mm; }
+.report-page .bar-list li { font-size: 8.5pt; }
+.report-page .bar-fill, .report-page .mini-bar span, .report-page .chart path { print-color-adjust: exact; -webkit-print-color-adjust: exact; }

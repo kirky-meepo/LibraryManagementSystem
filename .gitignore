@@ -1,0 +1,10 @@
+.env
+*.log
+storage/logs/
+storage/outbox/*
+!storage/outbox/.gitkeep
+
+# Build files kept on this PC only, never pushed
+CLAUDE.md
+PLAYBOOK.md
+docs/PROGRESS.md

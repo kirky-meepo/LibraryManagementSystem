@@ -1,0 +1,16 @@
+# The website as a container for Vercel (docs/DEPLOY.md). Vercel picks the Container preset from this file's name.
+# Running the project on your own PC does not use it.
+FROM dunglas/frankenphp:1-php8.4-alpine
+
+RUN install-php-extensions pdo_pgsql \
+ && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+WORKDIR /app
+COPY deploy/php.ini "$PHP_INI_DIR/conf.d/zz-library.ini"
+COPY deploy/Caddyfile /etc/caddy/Caddyfile
+COPY src ./src
+COPY public ./public
+
+# Vercel routes to PORT; the Caddyfile listens on it.
+ENV PORT=80
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
