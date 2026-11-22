@@ -4,10 +4,3 @@ storage/logs/
 storage/outbox/*
 !storage/outbox/.gitkeep
 
-# Build files kept on this PC only, never pushed
-CLAUDE.md
-PLAYBOOK.md
-docs/PROGRESS.md
-
-# Values to paste into Vercel (contains the database password), never pushed
-.env.vercel
