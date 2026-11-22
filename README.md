@@ -37,14 +37,14 @@ A reset makes one account, the office admin:
 
 ### Demo accounts
 
-Two shared accounts for trying the system. Open the sign-in page, choose **Librarian/Admin**, and use:
+Every copy of this project starts with two demo accounts on its own computer: `database\reset.ps1` (or `reset.sh`) creates them. Open the sign-in page, choose **Librarian/Admin**, and use:
 
 | Role | Email | Password | What it can do |
 | --- | --- | --- | --- |
 | Admin | `demo.admin@example.com` | `REDACTED` | Everything: staff accounts, Settings, Activity, copy limits, deleting users |
 | Librarian | `demo.librarian@example.com` | `REDACTED` | The library desk: books, users, requests, issue and return, fines, reports, messages (no staff accounts, Settings or deleting) |
 
-These are demo accounts with published passwords, so use them only to look around. Do not enter real personal data while signed in with them. `database/demo_accounts.sql` creates them (and restores these passwords if someone changes them); a reset never runs it on its own, and docs/DEPLOY.md, "Demo accounts", says how to run it. There are no sample students or teachers: make your own with **Create an account** (Member side) or in Manage Users. The library starts with 229 titles in 22 categories (606 copies, all on the shelf): 12 books from `06_seed.sql` and 217 real college textbooks and references from `07_seed_catalog.sql`. `reset.ps1 -NoSeed` (or `NO_SEED=1 bash database/reset.sh`) builds an empty database without books or the office admin.
+These passwords are public on purpose, so they only belong on your own computer. A hosted site (Vercel, Supabase) never gets them: `reset.ps1 -Hosted` skips them, and the author's online copy has its own private logins. Do not run `demo_accounts.sql` on a public site. Use them only to look around. Do not enter real personal data while signed in with them. There are no sample students or teachers: make your own with **Create an account** (Member side) or in Manage Users. The library starts with 229 titles in 22 categories (606 copies, all on the shelf): 12 books from `06_seed.sql` and 217 real college textbooks and references from `07_seed_catalog.sql`. `reset.ps1 -NoSeed` (or `NO_SEED=1 bash database/reset.sh`) builds an empty database without books or the office admin.
 
 Anyone can make a student or teacher account with **Create an account** on the sign-in page (Member side). Staff accounts are only made by an admin in Manage Users.
 

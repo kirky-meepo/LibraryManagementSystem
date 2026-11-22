@@ -81,26 +81,11 @@ It ends with "office admin password set" and "Reset finished: postgres". It made
 - **Forgot your password?** with an address you can open: the email arrives (check Junk too).
 - **Sign out.**
 
-## Demo accounts
+## Demo accounts: not on a public site
 
-`database/demo_accounts.sql` adds two shared accounts, and nothing else:
+`database/demo_accounts.sql` makes two shared accounts, Demo Admin and Demo Librarian, whose passwords are published in the README. A local `reset.ps1` creates them on purpose, so every copy of the project starts with them on its own computer.
 
-| Account | Email | Role |
-| --- | --- | --- |
-| Demo Admin | `demo.admin@example.com` | Admin: everything, including staff, Settings, Activity and deleting users |
-| Demo Librarian | `demo.librarian@example.com` | Librarian: books, users, requests, loans, fines, reports, messages |
-
-The passwords are published on purpose in the README ("Demo accounts"), because these are demo accounts; the file itself holds only their bcrypt hashes. Running it again creates a missing account and puts both passwords back, which is handy if someone changed one. A reset never runs it. It needs only the website's own login (`lms_app`), not the database admin. In PowerShell, in the `library` folder:
-
-```powershell
-$env:PGPASSWORD = 'the APP_DB_PASS value from your .env'
-& "C:\Program Files\PostgreSQL\18\bin\psql.exe" "host=<session pooler host> port=5432 dbname=postgres user=lms_app.<project-ref> sslmode=require" -f database\demo_accounts.sql
-Remove-Item Env:PGPASSWORD
-```
-
-It ends with a small table listing both accounts as active. On this PC: `& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -h localhost -d lms -f database\demo_accounts.sql`.
-
-Anyone with the Demo Admin password can add or delete users and change settings. To take access away, sign in as the office admin and use **Manage Users → Staff → Deactivate** (or **Reset password**).
+**A hosted reset (`reset.ps1 -Hosted`) never creates them, and you should not add them to a public site.** Anyone who reads the README could sign in, and Demo Admin can change settings and staff accounts. After the hosted reset, the only account is the office admin (`OFFICE_ADMIN_EMAIL`). If you want a demo login on the public site, add a librarian in **Manage Users → Staff → Add user** and keep its password private. Never run `demo_accounts.sql` against the hosted database, because it would put the published passwords back.
 
 ## Brevo on Vercel
 

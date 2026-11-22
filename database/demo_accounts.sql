@@ -3,12 +3,17 @@
 --   Demo Librarian  demo.librarian@example.com  librarian  (books, users, requests, loans, fines, reports, messages)
 -- example.com is reserved for examples, so no real person receives these accounts' emails.
 --
--- Run it on a database that already has the office admin (any reset makes it); it is never run by a reset:
---   this PC:   & "C:\Program Files\PostgreSQL8\bin\psql.exe" -U postgres -h localhost -d lms -f database\demo_accounts.sql
---   online:    see docs/DEPLOY.md, "Demo accounts"
--- Running it again creates whichever account is missing and puts both passwords back to the shared ones.
--- Only bcrypt hashes are here. The passwords are published on purpose in README.md ("Demo accounts"): these are demo
--- accounts, so use them only to look around.
+-- A local reset (database\reset.ps1 or reset.sh) already runs this file, so every copy of the project starts with
+-- these two accounts on its own computer. Their passwords are published on purpose in README.md ("Demo accounts").
+--
+-- NEVER run it on a public site. A hosted reset (reset.ps1 -Hosted) skips it on purpose; running it by hand on a
+-- hosted database would let anyone who reads the README sign in, and Demo Admin can change settings and staff.
+-- On a public site, give any demo login its own private password (Manage Users -> Staff -> Reset password).
+--
+-- By hand on a local database:
+--   & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -h localhost -d lms -f database\demo_accounts.sql
+-- Running it again creates whichever account is missing and puts both passwords back to the published ones.
+-- Only bcrypt hashes are here, never the passwords themselves.
 \set ON_ERROR_STOP on
 SET client_min_messages = warning;
 SET search_path = lms, public;

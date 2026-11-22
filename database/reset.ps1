@@ -151,6 +151,14 @@ if ($ranSeed -and (Test-Path $seedPasswords) -and ($Hosted -or $db -eq (Get-Cfg 
     }
 }
 
+# A local copy also gets the two demo accounts (Demo Admin, Demo Librarian). Never on a hosted database, never on a
+# scratch copy: a public site must not start with published passwords (docs/DEPLOY.md).
+$demoAccounts = Join-Path $PSScriptRoot 'demo_accounts.sql'
+if ($ranSeed -and -not $Hosted -and $db -eq (Get-Cfg 'DB_NAME' 'lms') -and (Test-Path $demoAccounts)) {
+    Write-Host '  adding the demo accounts (Demo Admin, Demo Librarian)'
+    Invoke-Psql @('-d', $db, '-f', $demoAccounts)
+}
+
 Write-Host "Reset finished: $db" -ForegroundColor Green
 
 if ($Tests) {

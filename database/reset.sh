@@ -109,6 +109,13 @@ if [[ $ran_seed -eq 1 && -f "$here/seed_passwords.php" && ( -n "${HOSTED:-}" || 
   fi
 fi
 
+# A local copy also gets the two demo accounts (Demo Admin, Demo Librarian). Never on a hosted database, never on a
+# scratch copy: a public site must not start with published passwords (docs/DEPLOY.md).
+if [[ $ran_seed -eq 1 && -z "${HOSTED:-}" && "$db" == "$(get_cfg DB_NAME lms)" && -f "$here/demo_accounts.sql" ]]; then
+  echo "  adding the demo accounts (Demo Admin, Demo Librarian)"
+  run_psql -d "$db" -f "$here/demo_accounts.sql"
+fi
+
 echo "Reset finished: $db"
 
 if [[ -n "${RUN_TESTS:-}" ]]; then
